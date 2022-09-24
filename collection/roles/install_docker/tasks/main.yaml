@@ -1,0 +1,33 @@
+
+- name: Update existing list of packages
+  apt:
+    update_cache: yes
+
+- name: Install prerequisite packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+    
+- name: Check if Docker CLI is installed
+  shell: docker version
+  register: docker_cli_path
+  ignore_errors: yes
+
+- name: Install Docker
+  shell: curl https://get.docker.com | sh
+  when: docker_cli_path.rc != 0
+
+- name: Check if Docker daemon is running
+  command: docker images
+  register: result
+  failed_when: result.rc != 0
+  changed_when: false
+
+- name: Login to Docker registry
+  command: docker login {{ registry_url }} -u {{ registry_user }} -p {{ registry_password }}
+  when: registry_enabled

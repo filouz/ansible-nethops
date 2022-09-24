@@ -1,0 +1,17 @@
+
+
+- name: Run nethops server
+  block:
+    - name: Create temporary bash file
+      tempfile:
+        state: file
+      register: temp_file
+
+    - name: Prepare nethops server
+      template:
+        src: run.sh.j2
+        dest: "{{ temp_file.path }}"
+        mode: "0755"
+    
+    - name: Start nethops server
+      command: "{{ temp_file.path }}"

@@ -1,0 +1,20 @@
+
+- name: Pull Docker image
+  docker_image:
+    name: "{{ image }}"
+    source: pull
+
+- name: Setup Openvpn & PKI
+  include_tasks: setup.yaml
+
+- name: Generate profiles
+  loop: "{{ PROFILES }}"
+  no_log: true
+  vars:
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+  include_tasks: profiles.yaml
+
+
+- name: Run server
+  include_tasks: run.yaml

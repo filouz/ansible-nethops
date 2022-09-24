@@ -1,0 +1,13 @@
+#!/bin/bash
+
+
+docker run --rm  \
+    -v {{ OVPN_VOLUME }}:/etc/openvpn \
+    {{ image }} \
+    ovpn_genconfig -b -M -u udp://{{ OVPN_DOMAIN }} -x "{{ OVPN_CA }}" -T "{{ OVPN_CIPHER_CHAIN }}" -C "{{ OVPN_CIPHER }}"
+
+docker run --rm  \
+    -v {{ OVPN_VOLUME }}:/etc/openvpn \
+    {{ image }} \
+    ovpn_initpki "{{ OVPN_CA_PWD }}"
+

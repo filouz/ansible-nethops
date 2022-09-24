@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars.yaml
+  roles:
+    - role: /collection/roles/install_docker
+    - role: /collection/roles/setup_nethops

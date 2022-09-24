@@ -1,0 +1,47 @@
+
+
+- name: Check Existing Profile Files
+  stat:
+    path: "{{ OVPN_VOLUME_PATH }}/{{ file }}"
+  loop:
+    - pki/reqs/{{ name }}.req
+    - pki/private/{{ name }}.key
+    - pki/issued/{{ name }}.crt
+  loop_control:
+    loop_var: file
+  register: profile_stats
+
+- name: Set fact for missing files
+  set_fact:
+    missing_files: "{{ profile_stats.results | selectattr('stat.exists', 'equalto', false) | list }}"
+  
+- name: Display Missing Profile Files
+  debug:
+    msg: "File '{{ file.file }}' is missing."
+  loop: "{{ missing_files }}"
+  loop_control:
+    loop_var: file
+    label: "{{ file.file }}"
+
+- name: Generate profiles files (Skip If Existing)
+  when: OVPN_OVERRIDE_EXISTING_PROFILES or missing_files | length > 0
+  block: 
+    - name: Create Temp File
+      tempfile:
+        state: file
+      register: temp_file
+
+    - name: Generate Profile Script
+      template:
+        src: create_profile.sh.j2
+        dest: "{{ temp_file.path }}"
+        mode: "0755"
+
+    - name: Execute Profile Creation '{{ name }}'
+      command: "{{ temp_file.path }}"
+
+- name: Fetch OVPN profiles
+  fetch:
+    src: "{{ OVPN_VOLUME_PATH }}/clients/{{ name }}/{{ name }}-combined.ovpn"
+    dest: "{{ PROFILES_PATH }}/{{ name }}.ovpn"
+    flat: yes

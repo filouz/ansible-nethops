@@ -1,0 +1,9 @@
+#!/bin/bash
+
+
+docker run --rm -d \
+    -v {{ OVPN_VOLUME }}:/etc/openvpn \
+        -p {{ OVPN_PORT }}:1194/udp \
+        --privileged \
+        {{ image }}
+

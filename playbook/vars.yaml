@@ -1,0 +1,25 @@
+
+registry_enabled: false
+registry_url: <registry_url>
+registry_user: <user>
+registry_password: <password>
+
+image: ghcr.io/filouz/nethops:local
+
+OVPN_DOMAIN: nethops.dev.example.com
+OVPN_CA: Nethops CA
+OVPN_CA_PWD: strongPassword
+OVPN_PORT: 2455
+
+OVPN_VOLUME: openvpn-data
+OVPN_OVERRIDE_EXISTING_CA: true
+OVPN_OVERRIDE_EXISTING_PROFILES: false
+
+PROFILES_PATH: /playbook/ovpn
+PROFILES:
+  - name: user_1
+    password: password_1
+  - name: user_2
+    password: password_2
+  - name: user_3
+    password: password_3

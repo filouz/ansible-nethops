@@ -1,0 +1,11 @@
+#!/bin/bash
+
+docker run --rm  \
+    -v {{ OVPN_VOLUME }}:/etc/openvpn \
+    {{ image }} \
+    ovpn_genclient -n "{{ name }}" -p "{{ password }}" -c "{{ OVPN_CA_PWD }}"
+
+docker run --rm  \
+    -v {{ OVPN_VOLUME }}:/etc/openvpn \
+    {{ image }} \
+    ovpn_getclient "{{ name }}" combined-save
